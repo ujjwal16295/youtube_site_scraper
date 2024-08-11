@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const FrontPage = () => {
@@ -6,13 +6,9 @@ const FrontPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [searchAccessToken ,setAccessToken]= useState('');
+  const [searchAccessToken, setAccessToken] = useState('');
 
-  // Replace this with the access token you obtained from your OAuth flow
-//   const accessToken = 'ya29.a0AcM612yt-ttTarJf4orG2QDPTp6twPhGbhkMgA7MNNHoAdUUNryIRnngAnkHOPxl6CBgSlSLwPWs-6AHovKOAn5Y0k5Xztrf2H1VQuWS8Odj5goUC35esBk4nbh5jJYpqPOm63W40TRxR0wOUAVz64cOdmSMlC_FHd2OaCgYKAXQSARESFQHGX2MiXzEH6yinTfgDUiU2ZZh6xA0171';
-
-
-  //search channel name
+  // Fetch channel name
   const fetchChannelName = async () => {
     try {
       const response = await axios.get(
@@ -64,9 +60,9 @@ const FrontPage = () => {
     }
   };
 
-  // Handle video selection and load it into an iframe for playback
-  const handleVideoClick = (video) => {
-    setSelectedVideo(video);
+  // Handle video selection and redirect to YouTube
+  const handleVideoClick = (videoId) => {
+    window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
   };
 
   return (
@@ -76,11 +72,10 @@ const FrontPage = () => {
       <input
         type='text'
         value={searchAccessToken}
-        onChange={(e)=>setAccessToken(e.target.value)}
-        placeholder='search for access token'
+        onChange={(e) => setAccessToken(e.target.value)}
+        placeholder='Enter access token'
       />
-      <button onClick={fetchChannelName}>Search channel</button>
- 
+      <button onClick={fetchChannelName}>Search Channel</button>
 
       <div>
         <input
@@ -95,27 +90,15 @@ const FrontPage = () => {
       <h2>Search Results</h2>
       <ul>
         {searchResults.map((result) => (
-          <li key={result.id.videoId} onClick={() => handleVideoClick(result)}>
+          <li
+            key={result.id.videoId}
+            onClick={() => handleVideoClick(result.id.videoId)}
+            style={{ cursor: 'pointer', marginBottom: '10px' }}
+          >
             {result.snippet.title}
           </li>
         ))}
       </ul>
-
-      {selectedVideo && (
-        <div>
-          <h3>{selectedVideo.snippet.title}</h3>
-          <iframe
-            id="player"
-            type="text/html"
-            width="640"
-            height="390"
-            src={`https://www.youtube.com/embed/${selectedVideo.id.videoId}`}
-            frameBorder="0"
-            allowFullScreen
-            title="YouTube video player"
-          ></iframe>
-        </div>
-      )}
     </div>
   );
 };
